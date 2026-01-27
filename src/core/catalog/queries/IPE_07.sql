@@ -103,11 +103,7 @@ LEFT JOIN [AIG_Nav_DW].[dbo].[Customers] cst
     ON cst.[id_company] = cle.id_company 
     AND cst.[No_] = cle.[Customer No_]
 WHERE cle.[Posting Date] <= {cutoff_date}
-    AND cle.[Customer Posting Group] IN (
-        'LOAN-REC-NAT', 'B2B-NG-NAT', 'B2C-NG-NAT', 'B2C-NG-INT', 'NTR-NG-NAT',
-        'B2B-NG-INT', 'NTR-NG-INT', 'UE', 'INL', 'EXPORT', 'EU', 'NATIONAL', 
-        'OM', 'NAT', 'AUS', 'EXCB2B-NAT', 'EMP-NAT'
-    )
+    AND cle.[Customer Posting Group] IN ({customer_posting_groups}
     AND comp.Flg_In_Conso_Scope = 1;
 
 DROP TABLE ##temp;
