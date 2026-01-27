@@ -8,7 +8,7 @@ select * into ##temp from (
     ,[Customer No_]
     ,sum([Amount (LCY)]) rem_bal_LCY
     FROM [AIG_Nav_DW].[dbo].[Detailed Customer Ledg_ Entry]
-    WHERE [Posting Date] <= '{cutoff_date}'
+    WHERE [Posting Date] <= {cutoff_date}
     GROUP BY [id_company],[Customer No_]
     Having sum([Amount (LCY)]) <> 0
 ) a;
@@ -22,7 +22,7 @@ select * into ##temp2 from (
     ,[Cust_ Ledger Entry No_]
     ,sum([Amount (LCY)]) rem_amt_LCY
     FROM [AIG_Nav_DW].[dbo].[Detailed Customer Ledg_ Entry]
-    WHERE [Posting Date] <= '{cutoff_date}'
+    WHERE [Posting Date] <= {cutoff_date}
     GROUP BY [id_company],[Cust_ Ledger Entry No_]
     Having sum([Amount (LCY)]) <> 0
 ) b;
@@ -77,7 +77,7 @@ LEFT JOIN [AIG_Nav_Jumia_Reconciliation].[fdw].[Dim_Busline] bl
     on bl.[Company_Code]=cle.id_company and bl.[Busline_Code]=cle.[Busline Code]
 LEFT JOIN [AIG_Nav_DW].[dbo].[Customers] cst
     on cst.[id_company]=cle.id_company and cst.[No_]=cle.[Customer No_]
-WHERE cle.[Posting Date] <= '{cutoff_date}'
+WHERE cle.[Posting Date] <= {cutoff_date}
 and cle.[Customer Posting Group] in (
     'LOAN-REC-NAT', 'B2B-NG-NAT','B2C-NG-NAT','B2C-NG-INT','NTR-NG-NAT',
     'B2B-NG-INT','NTR-NG-INT','UE','INL','EXPORT','EU','NATIONAL', 
