@@ -103,7 +103,7 @@ LEFT JOIN [AIG_Nav_DW].[dbo].[Customers] cst
     ON cst.[id_company] = cle.id_company 
     AND cst.[No_] = cle.[Customer No_]
 WHERE cle.[Posting Date] <= {cutoff_date}
-    AND cle.[Customer Posting Group] IN ({customer_posting_groups}
+    AND cle.[Customer Posting Group] IN {customer_posting_groups}
     AND comp.Flg_In_Conso_Scope = 1;
 
 DROP TABLE ##temp;
