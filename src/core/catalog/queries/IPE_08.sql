@@ -18,7 +18,7 @@ SELECT
     ,scv.[from_date]
     ,scv.[to_date]
     ,CONCAT(YEAR(scv.[to_date]),'-',MONTH(scv.[to_date])) AS expiration_ym
-    ,(CASE WHEN scv.[to_date] < '{cutoff_date}' THEN 'expired' ELSE 'valid' END) AS Is_Valid
+    ,(CASE WHEN scv.[to_date] < {cutoff_date} THEN 'expired' ELSE 'valid' END) AS Is_Valid
     ,scv.[created_at]
     ,CONCAT(YEAR(scv.[created_at]),'-',MONTH(scv.[created_at])) AS creation_ym
     ,CONCAT(YEAR(scv.[updated_at]),'-',MONTH(scv.[updated_at])) AS last_update_ym
@@ -58,7 +58,7 @@ LEFT JOIN (
         ,SUM(CASE WHEN [is_marketplace] = 1 THEN ISNULL([MTR_COUPON_MONEY_VALUE],0) ELSE 0 END) AS MPL_storecredit
         ,SUM(CASE WHEN [is_marketplace] = 0 THEN ISNULL([MTR_COUPON_MONEY_VALUE],0) ELSE 0 END) AS RTL_storecredit
     FROM [AIG_Nav_Jumia_Reconciliation].[dbo].[RPT_SOI]
-    WHERE [PACKAGE_DELIVERY_DATE] < '{cutoff_date}' 
+    WHERE [PACKAGE_DELIVERY_DATE] < {cutoff_date} 
         AND YEAR([DELIVERED_DATE]) > 2014 
         AND [ID_Company] IN {id_companies_active}
     GROUP BY
@@ -68,4 +68,4 @@ LEFT JOIN (
 ) sd3 ON scv.ID_company = sd3.[ID_Company] AND scv.[code]=sd3.[voucher_code]
 WHERE scv.ID_company IN {id_companies_active}
     AND scv.created_at > '2016-12-31' 
-    AND scv.created_at < '{cutoff_date}'
+    AND scv.created_at < {cutoff_date}
