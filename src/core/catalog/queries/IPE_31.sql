@@ -1,7 +1,7 @@
 -- =============================================
 -- Report: PG Detailed TV Extraction (IPE_31)
 -- Description: Collection accounts reconciliation - open transactions, in-progress lists, and payments
--- Parameters: {period_end_datetime}, {excluded_countries_ipe31}
+-- Parameters: {period_end_datetime}, {excluded_countries_ipe31}, {cutoff_date}
 -- Source: OMS (Cash Reconciliation tables)
 -- GL Accounts: Collection partner bank accounts
 -- Business Logic: Captures all open/in-progress collection items as of period end
