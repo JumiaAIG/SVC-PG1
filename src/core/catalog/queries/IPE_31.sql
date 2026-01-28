@@ -1,7 +1,7 @@
 -- =============================================
 -- Report: PG Detailed TV Extraction (IPE_31)
 -- Description: Collection accounts reconciliation - open transactions, in-progress lists, and payments
--- Parameters: {period_end_datetime}, {excluded_countries_ipe31}, {cutoff_date}
+-- Parameters: {subsequent_month_start}, {excluded_countries_ipe31}, {cutoff_date}
 -- Source: OMS (Cash Reconciliation tables)
 -- GL Accounts: Collection partner bank accounts
 -- Business Logic: Captures all open/in-progress collection items as of period end
@@ -74,10 +74,10 @@ FROM (
                     THEN ISNULL(p1.payment_reversal_date, t1.created_date)
                 ELSE t1.Created_Date
             END
-        ) < CAST({period_end_datetime} AS DATETIME)
+        ) < CAST({subsequent_month_start} AS DATETIME)
         AND (
             t1.Transaction_List_Nr IS NULL
-            OR t1.Transaction_List_Date >= CAST({period_end_datetime} AS DATETIME)
+            OR t1.Transaction_List_Date >= CAST({subsequent_month_start} AS DATETIME)
             OR CTE.conc IS NOT NULL
         )
         AND t1.[Amount] <> 0
@@ -95,8 +95,8 @@ FROM (
         Related_Entity,
         [Amount]
     FROM [AIG_Nav_Jumia_Reconciliation].[dbo].[RPT_CASHREC_REALLOCATIONS]
-    WHERE [Original_Transaction_date] < CAST({period_end_datetime} AS DATETIME)
-        AND [Reallocated_Transaction_Date] >= CAST({period_end_datetime} AS DATETIME)
+    WHERE [Original_Transaction_date] < CAST({subsequent_month_start} AS DATETIME)
+        AND [Reallocated_Transaction_Date] >= CAST({subsequent_month_start} AS DATETIME)
 
     UNION ALL
 
@@ -118,7 +118,7 @@ FROM (
             OMS_Amount_Received, 
             OMS_Packlist_Created_Date
         FROM [AIG_Nav_Jumia_Reconciliation].[dbo].[RPT_PACKLIST_PAYMENTS]
-        WHERE OMS_Packlist_Created_Date < CAST({period_end_datetime} AS DATETIME)
+        WHERE OMS_Packlist_Created_Date < CAST({subsequent_month_start} AS DATETIME)
             AND OMS_Packlist_Status IN ('inProgress', 'closed', 'waitingConfirmation')
             AND OMS_PAYMENT_RECONCILED_AMOUNT IS NOT NULL
         GROUP BY 
@@ -137,7 +137,7 @@ FROM (
                 ISNULL([OMS_Payment_Charges_Reconciled_Amount], 0)
             ) AS applied_amount
         FROM [AIG_Nav_Jumia_Reconciliation].[dbo].[RPT_PACKLIST_PAYMENTS]
-        WHERE [OMS_Payment_Date] < CAST({period_end_datetime} AS DATETIME)
+        WHERE [OMS_Payment_Date] < CAST({subsequent_month_start} AS DATETIME)
         GROUP BY [ID_Company], [OMS_Packlist_No]
     ) t2 
         ON t2.ID_Company = tl.ID_Company 
@@ -151,7 +151,7 @@ FROM (
         WHERE OMS_Entity_Type = 'packlist'
             AND OMS_Force_Closed = 1
             AND (
-                OMS_Close_Date < CAST({period_end_datetime} AS DATETIME) 
+                OMS_Close_Date < CAST({subsequent_month_start} AS DATETIME) 
                 OR OMS_Close_Date IS NULL
             )
     ) fc 
@@ -186,8 +186,8 @@ FROM (
                 ISNULL(p1.[OMS_Payment_Charges_Reconciled_Amount], 0)
             ) AS applied_amount
         FROM [AIG_Nav_Jumia_Reconciliation].[dbo].[RPT_PACKLIST_PAYMENTS] p1
-        WHERE p1.[OMS_Packlist_Created_Date] < CAST({period_end_datetime} AS DATETIME)
-            AND p1.[OMS_Payment_Date] < CAST({period_end_datetime} AS DATETIME)
+        WHERE p1.[OMS_Packlist_Created_Date] < CAST({subsequent_month_start} AS DATETIME)
+            AND p1.[OMS_Payment_Date] < CAST({subsequent_month_start} AS DATETIME)
             AND p1.[OMS_Payment_Status] IN ('inProgress', 'closed', 'waitingConfirmation')
             AND OMS_PAYMENT_RECONCILED_AMOUNT IS NOT NULL
         GROUP BY p1.[ID_Company], p1.[OMS_Payment_No]
@@ -205,16 +205,16 @@ FROM (
                 (
                     OMS_Force_Closed = 1 
                     AND (
-                        OMS_Close_Date < CAST({period_end_datetime} AS DATETIME) 
+                        OMS_Close_Date < CAST({subsequent_month_start} AS DATETIME) 
                         OR OMS_Close_Date IS NULL
                     )
                 ) 
-                OR OMS_Close_Date < CAST({period_end_datetime} AS DATETIME)
+                OR OMS_Close_Date < CAST({subsequent_month_start} AS DATETIME)
             )
     ) fc 
         ON fc.ID_Company = p.[ID_Company]
         AND fc.OMS_Entity_No = p.OMS_Payment_No
-    WHERE p.OMS_Payment_Date < CAST({period_end_datetime} AS DATETIME)
+    WHERE p.OMS_Payment_Date < CAST({subsequent_month_start} AS DATETIME)
         AND (
             ISNULL(p.OMS_Payment_Amount, 0) + 
             ISNULL(p.OMS_Charges_Amount, 0) - 
