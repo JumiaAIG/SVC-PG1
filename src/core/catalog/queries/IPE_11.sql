@@ -1,7 +1,7 @@
 -- =============================================
 -- Report: Marketplace Accrued Revenues (IPE_11)
 -- Description: Seller transactions not yet paid out (accrued revenues)
--- Parameters: {cutoff_date}, {period_start_date}
+-- Parameters: {cutoff_date}, {period_month_start}, {subsequent_month_start}
 -- Source: RING (Seller Center)
 -- GL Accounts: Marketplace accrued revenue accounts
 -- Logic: Captures transactions created during the reporting period that remain unpaid
@@ -50,8 +50,8 @@ LEFT JOIN [AIG_Nav_Jumia_Reconciliation].[RING].[RPT_TRANSACTIONS] AS RTSR
     ON trs.ID_Company = RTSR.ID_Company 
     AND trs.ID_Transaction = RTSR.ID_Transaction
 WHERE trs.[Created_Date] > '2020-01-01 00:00:00.000'
-    AND trs.[Created_Date] >= {period_start_date} -- Start of reporting period (e.g., 2025-08-01 00:00:00)
-    AND trs.[Created_Date] < {period_end_datetime} -- End of reporting period (e.g., 2025-09-01 00:00:00)
+    AND trs.[Created_Date] >= {period_month_start} -- Start of reporting period (e.g., 2025-08-01 00:00:00)
+    AND trs.[Created_Date] < {subsequent_month_start} -- End of reporting period (e.g., 2025-09-01 00:00:00)
     AND asg.ASG_Level_1 = 'Revenues'
     AND (
         trs.[ID_Account_Statement] IS NULL
