@@ -1,9 +1,10 @@
 -- =============================================
 -- Report: NAV GL Entries (CR_03)
--- Description: General ledger entries with remaining balances for reconciliation
+-- Description: General ledger entries 
 -- Parameters: {subsequent_month_start}, {gl_accounts_cr_03}
 -- Source: NAV Data Warehouse
--- Purpose: Extract GL entries for variance analysis vs OMS target values
+-- GL Account: 15010
+-- Purpose: Extract GL entries for variance analysis 
 -- =============================================
 
 SELECT
