@@ -3,7 +3,7 @@
 -- Description: General ledger Balances 
 -- Parameters: {year_start}, {year_end}, {gl_accounts_cr_04}
 -- Source: NAV Data Warehouse
--- GL Accounts: Collection accounts ('18650','18397')
+-- GL Accounts: 18650,18397
 -- Purpose: Extract GL balances for variance analysis 
 -- =============================================
 SELECT *
